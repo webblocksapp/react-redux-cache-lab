@@ -16,6 +16,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@apiClients": ["./src/apiClients"],
       "@interfaces": ["./src/interfaces"],
       "@states": ["./src/states"],
       "@store": ["./src/store.ts"],
