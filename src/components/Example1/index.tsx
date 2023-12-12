@@ -1,24 +1,27 @@
 import { contactApiClient } from '@apiClients';
 import { v4 as uuid } from 'uuid';
 import { useContactModel } from '../../models/useContactModel';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { Contact, EntityParams } from '@interfaces';
 
 export const Example1 = () => {
   const { list, listState } = useContactModel();
-  const page = Number(listState.data?.pagination?.page) || 0;
+  const filter = useRef<EntityParams<Contact>>({ _page: 0 });
   const totalPages = Number(listState.data?.pagination?.totalPages) || 0;
-  const [createContact, { isError }] = contactApiClient.useCreateMutation();
+  const [createContact] = contactApiClient.useCreateMutation();
 
   const next = () => {
-    list({ _page: page + 1 });
+    filter.current = { ...filter.current, _page: (filter.current._page || 0) + 1 };
+    list(filter.current);
   };
 
   const prev = () => {
-    list({ _page: page - 1 });
+    filter.current = { ...filter.current, _page: (filter.current._page || 0) - 1 };
+    list(filter.current);
   };
 
   useEffect(() => {
-    list({ _page: 0 });
+    list(filter.current);
   }, []);
 
   return (
@@ -35,25 +38,22 @@ export const Example1 = () => {
       )}
 
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <button disabled={page <= 0} onClick={prev}>
+        <button disabled={filter.current._page! <= 0} onClick={prev}>
           Prev
         </button>
-        <button disabled={page >= totalPages - 1} onClick={next}>
+        <button disabled={filter.current._page! >= totalPages - 1} onClick={next}>
           Next
         </button>
         <button
           onClick={() => {
             createContact({
-              id: uuid(),
-              name: 'xxxxx',
-              phones: ['111111'],
-              speedDial: false,
+              contact: { id: uuid(), name: 'xxxxx', phones: ['111111'], speedDial: false },
+              cacheTag: filter.current,
             });
           }}
         >
           Add contact
         </button>
-        {isError ? 'An error ocurred' : ''}
       </div>
     </div>
   );

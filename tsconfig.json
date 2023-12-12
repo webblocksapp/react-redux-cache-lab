@@ -18,6 +18,8 @@
     "paths": {
       "@apiClients": ["./src/apiClients"],
       "@components": ["./src/components"],
+      "@constants": ["./src/constants"],
+      "@hocs": ["./src/hocs"],
       "@interfaces": ["./src/interfaces"],
       "@mocks/*": ["./src/mocks/*"],
       "@models": ["./src/models"],

@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { store } from '@store';
 import { Provider as ReduxProvider } from 'react-redux';
-import { App } from './App.tsx';
+import { NotificationsProvider } from '@components';
+import { store } from '@store';
 import { isDev } from '@utils';
+import { App } from './App.tsx';
 
 const main = async () => {
   if (isDev()) {
@@ -14,7 +15,9 @@ const main = async () => {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <ReduxProvider store={store}>
-        <App />
+        <NotificationsProvider>
+          <App />
+        </NotificationsProvider>
       </ReduxProvider>
     </React.StrictMode>
   );

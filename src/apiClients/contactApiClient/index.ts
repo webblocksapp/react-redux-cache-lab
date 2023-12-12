@@ -52,7 +52,21 @@ export const contactApiClient = createApi({
         const response = await methods.list(params);
         return { data: response };
       },
-      providesTags: (result) => (result ? result.contacts.map(({ id }) => ({ type: 'Contacts', id })) : ['Contacts']),
+      providesTags: (result, _, params) => {
+        return result
+          ? [
+              ...result.contacts.map(() => ({ type: 'Contacts' as const, id: JSON.stringify(params) })),
+              ...result.contacts.map(({ id }) => ({ type: 'Contacts' as const, id })),
+            ]
+          : ['Contacts'];
+      },
+    }),
+    create: builder.mutation<Contact, { contact: Contact; cacheTag?: EntityParams<Contact> }>({
+      queryFn: async (data) => {
+        const contact = await methods.create(data.contact);
+        return { data: contact };
+      },
+      invalidatesTags: (_, __, data) => [{ type: 'Contacts' as const, id: JSON.stringify(data.cacheTag) }],
     }),
     listAndMerge: builder.query<Contact[], EntityParams<Contact> | undefined>({
       queryFn: async (params) => {
@@ -68,13 +82,6 @@ export const contactApiClient = createApi({
       forceRefetch({ currentArg, previousArg }) {
         return currentArg !== previousArg;
       },
-    }),
-    create: builder.mutation<Contact, Contact>({
-      queryFn: async (data) => {
-        const contact = await methods.create(data);
-        return { data: contact };
-      },
-      invalidatesTags: ['Contacts'],
     }),
   }),
 });
