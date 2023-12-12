@@ -1,7 +1,11 @@
-import { contactApiClient } from '@apiClients';
+import { Example1, Example2 } from '@components';
 
 export const App = () => {
-  const { data } = contactApiClient.useListQuery(undefined);
-
-  return <>{JSON.stringify(data)}</>;
+  return (
+    <div>
+      <Example1 />
+      <hr />
+      <Example2 />
+    </div>
+  );
 };

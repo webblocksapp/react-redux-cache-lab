@@ -1,6 +1,5 @@
 import { LOCAL_BASE_URL, objectMatchCriteria, paginateData } from '@utils';
 import { HttpResponse, delay, http } from 'msw';
-import { v4 as uuid } from 'uuid';
 import { Contact } from '@interfaces';
 import { data } from '../data';
 
@@ -49,9 +48,9 @@ export const contactHandler = [
   // Create
   http.post(`${LOCAL_BASE_URL}/contacts`, async ({ request }) => {
     const contact = (await request.json()) as Contact;
-    let body = { id: uuid(), ...contact };
+    data.contacts.push(contact);
     await delay(2000);
-    return HttpResponse.json(body, { status: 200 });
+    return HttpResponse.json(contact, { status: 200 });
   }),
   // Read
   http.get(`${LOCAL_BASE_URL}/contacts/:id`, async ({ params }) => {

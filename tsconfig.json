@@ -17,6 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@apiClients": ["./src/apiClients"],
+      "@components": ["./src/components"],
       "@interfaces": ["./src/interfaces"],
       "@states": ["./src/states"],
       "@store": ["./src/store.ts"],
