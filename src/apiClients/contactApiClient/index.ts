@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Contact, EntityParams, ListResponse, Pagination } from '@interfaces';
 import { LOCAL_BASE_URL, axiosLocal } from '@utils';
-import { createEntityAdapter } from '@reduxjs/toolkit';
 
 const methods = {
   list: async (
@@ -43,20 +42,17 @@ const methods = {
   },
 };
 
-export const contactsAdapter = createEntityAdapter<Contact>();
-export const initialState = contactsAdapter.getInitialState();
-
 export const contactApiClient = createApi({
   reducerPath: 'contactState',
   baseQuery: fetchBaseQuery({ baseUrl: LOCAL_BASE_URL }),
   tagTypes: ['Contacts'],
   endpoints: (builder) => ({
-    list: builder.query<Contact[], EntityParams<Contact> | undefined>({
+    list: builder.query<{ contacts: Contact[]; pagination: Pagination }, EntityParams<Contact> | undefined>({
       queryFn: async (params) => {
-        const { contacts } = await methods.list(params);
-        return { data: contacts };
+        const response = await methods.list(params);
+        return { data: response };
       },
-      providesTags: ['Contacts'],
+      providesTags: (result) => (result ? result.contacts.map(({ id }) => ({ type: 'Contacts', id })) : ['Contacts']),
     }),
     listAndMerge: builder.query<Contact[], EntityParams<Contact> | undefined>({
       queryFn: async (params) => {

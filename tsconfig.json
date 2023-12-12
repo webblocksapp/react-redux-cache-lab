@@ -19,6 +19,8 @@
       "@apiClients": ["./src/apiClients"],
       "@components": ["./src/components"],
       "@interfaces": ["./src/interfaces"],
+      "@mocks/*": ["./src/mocks/*"],
+      "@models": ["./src/models"],
       "@states": ["./src/states"],
       "@store": ["./src/store.ts"],
       "@utils": ["./src/utils"]

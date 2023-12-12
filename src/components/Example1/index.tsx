@@ -1,35 +1,44 @@
 import { contactApiClient } from '@apiClients';
-import { useState } from 'react';
-import { Contact, EntityParams } from '@interfaces';
 import { v4 as uuid } from 'uuid';
+import { useContactModel } from '../../models/useContactModel';
+import { useEffect } from 'react';
 
 export const Example1 = () => {
-  const [params, setParams] = useState<EntityParams<Contact>>({ _size: 10, _page: 0 });
-  const { data } = contactApiClient.useListQuery(params);
+  const { list, listState } = useContactModel();
+  const page = Number(listState.data?.pagination?.page) || 0;
+  const totalPages = Number(listState.data?.pagination?.totalPages) || 0;
   const [createContact, { isError }] = contactApiClient.useCreateMutation();
-  const _page = params._page || 0;
 
   const next = () => {
-    setParams((prev) => ({ ...prev, _page: _page + 1 }));
+    list({ _page: page + 1 });
   };
 
   const prev = () => {
-    setParams((prev) => ({ ...prev, _page: _page - 1 }));
+    list({ _page: page - 1 });
   };
+
+  useEffect(() => {
+    list({ _page: 0 });
+  }, []);
 
   return (
     <div>
       <h5>Paginated data</h5>
-      <ul>
-        {data?.map?.((item) => (
-          <li key={item.id}>{item.name}</li>
-        ))}
-      </ul>
+      {listState.isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {listState.data?.contacts?.map?.((item) => (
+            <li key={item.id}>{item.name}</li>
+          ))}
+        </ul>
+      )}
+
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <button disabled={_page <= 0} onClick={prev}>
+        <button disabled={page <= 0} onClick={prev}>
           Prev
         </button>
-        <button disabled={_page > 0} onClick={next}>
+        <button disabled={page >= totalPages - 1} onClick={next}>
           Next
         </button>
         <button
